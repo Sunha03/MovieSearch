@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     EditText edit_movie_name;
     LinearLayoutManager layoutManager;
     RecyclerView recyclerView;
+    TextView tv_not_found;
 
     ArrayList<MovieInfo> movieInfoArrayList = null;
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         edit_movie_name = (EditText)findViewById(R.id.edit_movie_name);
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        tv_not_found = (TextView)findViewById(R.id.tv_not_found);
 
         movieInfoArrayList = new ArrayList<>();
         layoutManager = new LinearLayoutManager(this);
@@ -60,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             //Set URL
             strUrl = "https://openapi.naver.com/v1/search/movie.json?query=" + movie_name;
             //Search
+            movieInfoArrayList.removeAll(movieInfoArrayList);
             getMovieInfo(strUrl);
         }
     }
@@ -109,8 +113,17 @@ public class MainActivity extends AppCompatActivity {
                 parseJSON();
 
                 //Set recyclerAdapter
-                RecyclerAdapter adapter = new RecyclerAdapter(movieInfoArrayList, getApplicationContext());
-                recyclerView.setAdapter(adapter);
+                if(movieInfoArrayList.size() != 0) {
+                    tv_not_found.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    RecyclerAdapter adapter = new RecyclerAdapter(movieInfoArrayList, getApplicationContext());
+                    recyclerView.setAdapter(adapter);
+                }
+                else {
+                    tv_not_found.setVisibility(View.VISIBLE);
+                    tv_not_found.setText("\"" + movie_name + "\"에 대한 결과물이 없습니다.");
+                    recyclerView.setVisibility(View.GONE);
+                }
             }
         }
 
