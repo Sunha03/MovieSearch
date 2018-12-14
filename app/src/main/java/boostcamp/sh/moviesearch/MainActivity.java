@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,10 +30,13 @@ public class MainActivity extends AppCompatActivity {
     LinearLayoutManager layoutManager;
     RecyclerView recyclerView;
 
+    ArrayList<MovieInfo> movieInfoArrayList = null;
+
     String strUrl = null;
     String movie_name = null;
 
     JSONArray movie = null;
+    String myJSON = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +46,11 @@ public class MainActivity extends AppCompatActivity {
         edit_movie_name = (EditText)findViewById(R.id.edit_movie_name);
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
-        ArrayList<MovieInfo> movieInfoArrayList = new ArrayList<>();
-        movieInfoArrayList.add(new MovieInfo("title", "https://ssl.pstatic.net/imgmovie/mdi/mit110/1641/164125_P01_102923.jpg", 1.23, 2018, "director", "actor", "https://www.naver.com"));
-        movieInfoArrayList.add(new MovieInfo("t", "https://ssl.pstatic.net/imgmovie/mdi/mit110/1641/164125_P01_102923.jpg", 4.56, 2010, "d", "a", "www.google.com"));
-        movieInfoArrayList.add(new MovieInfo("11111", "https://ssl.pstatic.net/imgmovie/mdi/mit110/1641/164125_P01_102923.jpg", 222222, 555555555, "22222222222", "55555555555", "https://www.naver.com"));
-
+        movieInfoArrayList = new ArrayList<>();
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-
-        RecyclerAdapter adapter = new RecyclerAdapter(movieInfoArrayList, getApplicationContext());
-        recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     public void onClick(View v) {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
                     br.close();
                     con.disconnect();
-                    System.out.println(sb.toString());
+                    //System.out.println(sb.toString());            //Print JSON
 
                     return sb.toString().trim();
                 } catch (MalformedURLException e) {
@@ -102,9 +102,45 @@ public class MainActivity extends AppCompatActivity {
                     return e.getMessage();
                 }
             }
+
+            protected void onPostExecute(String result) {
+                myJSON = result;
+
+                parseJSON();
+
+                //Set recyclerAdapter
+                RecyclerAdapter adapter = new RecyclerAdapter(movieInfoArrayList, getApplicationContext());
+                recyclerView.setAdapter(adapter);
+            }
         }
 
         getDataJSON g = new getDataJSON();
         g.execute(strUrl);
+    }
+
+    private void parseJSON() {
+        try {
+            JSONObject jsonObj = new JSONObject(myJSON);
+            movie = jsonObj.getJSONArray("items");
+
+            for(int i=0;i<movie.length();i++) {
+                JSONObject obj = movie.getJSONObject(i);
+
+                String title = obj.optString("title");
+                //remove <b>, </b> tag
+                title = title.replace("<b>", "");
+                title = title.replace("</b>", "");
+                String image = obj.optString("image");
+                float userRating = (float)obj.optDouble("userRating");
+                int pubDate = obj.optInt("pubDate");
+                String director = obj.optString("director");
+                String actor = obj.optString("actor");
+                String link = obj.optString("link");
+
+                movieInfoArrayList.add(new MovieInfo(title, image, userRating, pubDate, director, actor, link));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
