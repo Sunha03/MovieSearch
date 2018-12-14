@@ -1,5 +1,6 @@
 package boostcamp.sh.moviesearch;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -58,10 +60,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick(View v) {
         if (v.getId() == R.id.btn_search) {
+            //Hide Keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
             //Get Search Keyword
             movie_name = edit_movie_name.getText().toString();
             //Set URL
-            strUrl = "https://openapi.naver.com/v1/search/movie.json?query=" + movie_name;
+            strUrl = "https://openapi.naver.com/v1/search/movie.json?query=" + movie_name + "&display=100";
             //Search
             movieInfoArrayList.removeAll(movieInfoArrayList);
             getMovieInfo(strUrl);
