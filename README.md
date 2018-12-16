@@ -11,3 +11,8 @@
 - 검색결과를 RecyclerView에 표시하기
 - 각 영화정보에는 아래 정보가 모두 표시 : 썸네일 이미지, 제목, 평점, 연도, 감독, 출연배우
 - 목록에서 영화 선택시 해당 영화 정보 link페이지로 이동
+
+## ScreenShots
+<div>
+  <img src="https://user-images.githubusercontent.com/33214969/50057877-dbce1280-01b3-11e9-98e2-f466913c1a93.png" width="250">
+</div>
