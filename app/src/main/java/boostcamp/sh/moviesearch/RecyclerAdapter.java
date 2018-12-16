@@ -31,25 +31,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.context = context;
     }
 
-    public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
-        TextView tv_title;
-        ImageView img_image;
-        RatingBar rb_userRating;
-        TextView tv_pubDate;
-        TextView tv_director;
-        TextView tv_actor;
-
-        public RecyclerViewHolder(View itemView) {
-            super(itemView);
-            tv_title = itemView.findViewById(R.id.tv_title);
-            img_image = itemView.findViewById(R.id.img_image);
-            rb_userRating = itemView.findViewById(R.id.rb_userRating);
-            tv_pubDate = itemView.findViewById(R.id.tv_pubDate);
-            tv_director = itemView.findViewById(R.id.tv_director);
-            tv_actor = itemView.findViewById(R.id.tv_actor);
-        }
-    }
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
