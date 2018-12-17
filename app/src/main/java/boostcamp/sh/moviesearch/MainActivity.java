@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 if(movieInfoArrayList.size() != 0) {
                     binding.tvNotFound.setVisibility(View.GONE);
                     binding.recyclerView.setVisibility(View.VISIBLE);
-                    RecyclerAdapter adapter = new RecyclerAdapter(getApplicationContext(), movieInfoArrayList);
+                    RecyclerAdapter adapter = new RecyclerAdapter(movieInfoArrayList, getApplicationContext());
                     binding.recyclerView.setAdapter(adapter);
                 }
                 else {
