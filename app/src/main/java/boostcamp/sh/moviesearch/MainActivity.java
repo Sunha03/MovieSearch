@@ -1,18 +1,13 @@
 package boostcamp.sh.moviesearch;
 
 import android.content.Context;
-import android.graphics.Canvas;
+import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,13 +21,12 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.RecursiveAction;
+
+import boostcamp.sh.moviesearch.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    EditText edit_movie_name;
+    ActivityMainBinding binding;
     LinearLayoutManager layoutManager;
-    RecyclerView recyclerView;
-    TextView tv_not_found;
 
     ArrayList<MovieInfo> movieInfoArrayList = null;
 
@@ -47,15 +41,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        edit_movie_name = (EditText)findViewById(R.id.edit_movie_name);
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        tv_not_found = (TextView)findViewById(R.id.tv_not_found);
+        //Data Binding
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        movieInfoArrayList = new ArrayList<>();
-        layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     public void onClick(View v) {
@@ -65,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
             //Get Search Keyword
-            movie_name = edit_movie_name.getText().toString();
+            movie_name = binding.editMovieName.getText().toString();
             //Set URL
             strUrl = "https://openapi.naver.com/v1/search/movie.json?query=" + movie_name + "&display=100";
             //Search
@@ -120,15 +108,15 @@ public class MainActivity extends AppCompatActivity {
 
                 //Set recyclerAdapter
                 if(movieInfoArrayList.size() != 0) {
-                    tv_not_found.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    RecyclerAdapter adapter = new RecyclerAdapter(movieInfoArrayList, getApplicationContext());
-                    recyclerView.setAdapter(adapter);
+                    binding.tvNotFound.setVisibility(View.GONE);
+                    binding.recyclerView.setVisibility(View.VISIBLE);
+                    RecyclerAdapter adapter = new RecyclerAdapter(getApplicationContext(), movieInfoArrayList);
+                    binding.recyclerView.setAdapter(adapter);
                 }
                 else {
-                    tv_not_found.setVisibility(View.VISIBLE);
-                    tv_not_found.setText("\"" + movie_name + "\"에 대한 결과물이 없습니다.");
-                    recyclerView.setVisibility(View.GONE);
+                    binding.tvNotFound.setVisibility(View.VISIBLE);
+                    binding.tvNotFound.setText("\"" + movie_name + "\"에 대한 결과물이 없습니다.");
+                    binding.recyclerView.setVisibility(View.GONE);
                 }
             }
         }
