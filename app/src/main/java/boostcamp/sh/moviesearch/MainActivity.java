@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -44,20 +45,30 @@ public class MainActivity extends AppCompatActivity {
         //Data Binding
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        movieInfoArrayList = new ArrayList<>();
+
+        layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        binding.recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     public void onClick(View v) {
         if (v.getId() == R.id.btn_search) {
             //Hide Keyboard
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            imm.hideSoftInputFromWindow(binding.editMovieName.getWindowToken(), 0);
 
             //Get Search Keyword
             movie_name = binding.editMovieName.getText().toString();
             //Set URL
             strUrl = "https://openapi.naver.com/v1/search/movie.json?query=" + movie_name + "&display=100";
+
+            if(movieInfoArrayList.size() != 0) {
+                movieInfoArrayList.removeAll(movieInfoArrayList);
+            }
+
             //Search
-            movieInfoArrayList.removeAll(movieInfoArrayList);
             getMovieInfo(strUrl);
         }
     }
